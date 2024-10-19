@@ -38,6 +38,7 @@ def browser(pytestconfig):
         options.binary_location = "C:\\Users\\PC\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe)"
         driver = webdriver.Chrome(options=options, service=Service(executable_path=yad))
 
+    driver.maximize_window()
     driver.base_url = base_url
 
     yield driver
