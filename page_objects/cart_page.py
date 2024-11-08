@@ -14,7 +14,7 @@ class CartPage(BasePage):
     )
     PRODUCT_NAME = (By.XPATH, "//td[contains(@class, 'text-wrap')]/a")
 
-    def go_to_main_page(self, **kwargs):
+    def go_to_main_page(self):
         super().open(self.browser.base_url)
 
     def add_item_to_cart(self, quantity_cards):
