@@ -9,7 +9,7 @@ class ProductPage(BasePage):
     PRICE_NEW = (By.XPATH, "//span[@class='price-new']")
     DESCRIPTION_LINK = (By.LINK_TEXT, "Description")
 
-    def open_main_page(self, **kwargs):
+    def open_main_page(self):
         super().open(self.browser.base_url)
 
     def select_first_product(self):
