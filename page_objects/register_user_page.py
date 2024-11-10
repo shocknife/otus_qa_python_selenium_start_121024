@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.base_page import BasePage
 
@@ -12,9 +13,11 @@ class RegistrationPage(BasePage):
     NEWSLETTER_INPUT = (By.XPATH, "//input[@id='input-newsletter']")
     AGREE_INPUT = (By.XPATH, "//input[@name='agree']")
 
-    def open(self, **kwargs):
+    @allure.step("Открытие страницы регистрации пользователя")
+    def open_reg_user_page(self):
         super().open(f"{self.browser.base_url}/index.php?route=account/register")
 
+    @allure.step("Проверка элементов на странице регистрации пользователя")
     def check_registration_user_form(self):
         self.find_element(*self.FIRSTNAME_INPUT)
         self.find_element(*self.LASTNAME_INPUT)

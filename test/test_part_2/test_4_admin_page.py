@@ -1,6 +1,9 @@
+import allure
+
 from page_objects.admin_page import AdminPage
 
 
+@allure.title("Проверка элементов на странице входа в администратора")
 def test_admin_page(browser):
     admin_page = AdminPage(browser)
     admin_page.go_to_administration()

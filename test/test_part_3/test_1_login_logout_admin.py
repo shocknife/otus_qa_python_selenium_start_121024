@@ -1,6 +1,9 @@
+import allure
+
 from page_objects.admin_page import AdminPage
 
 
+@allure.title("Проверка входа под учеткой администратора и выход из учетки")
 def test_login_logout_admin(browser):
     admin_page = AdminPage(browser)
     admin_page.go_to_administration()
