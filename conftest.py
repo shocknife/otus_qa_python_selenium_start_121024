@@ -80,14 +80,14 @@ def browser(pytestconfig, request):
     driver.logger = logger
     driver.test_name = request.node.name
 
-    logger.warning("Browser %s started" % browser)
+    logger.info("Browser %s started" % browser)
 
     driver.maximize_window()
     driver.base_url = base_url
 
     def fin():
         driver.quit()
-        logger.warning(
+        logger.info(
             "===> Test %s finished at %s" % (request.node.name, datetime.datetime.now())
         )
 
