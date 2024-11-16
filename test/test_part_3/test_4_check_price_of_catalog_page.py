@@ -1,6 +1,11 @@
+import allure
+
 from page_objects.catalog_page import VerifyPrice
 
 
+@allure.title(
+    "Проверка изменения отображения цены в валюте на странице каталога товаров"
+)
 def test_page_catalog(browser):
     currency_catalog_page = VerifyPrice(browser)
     currency_catalog_page.go_to_catalog()

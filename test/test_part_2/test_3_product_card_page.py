@@ -1,6 +1,9 @@
+import allure
+
 from page_objects.product_card_page import ProductPage
 
 
+@allure.title("Проверка элементов на странице продукта")
 def test_page_product(browser):
     product_page = ProductPage(browser)
     product_page.open_main_page()

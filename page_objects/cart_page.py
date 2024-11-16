@@ -1,5 +1,7 @@
 import time
 from random import randint
+
+import allure
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from page_objects.base_page import BasePage
@@ -14,9 +16,11 @@ class CartPage(BasePage):
     )
     PRODUCT_NAME = (By.XPATH, "//td[contains(@class, 'text-wrap')]/a")
 
+    @allure.step("Выполняется вход на главную страницу")
     def go_to_main_page(self):
         super().open(self.browser.base_url)
 
+    @allure.step("Проверка добавления продукта в корзину")
     def add_item_to_cart(self, quantity_cards):
         products = self.find_elements(*self.DESCRIPTION_PRODUCTS)
         assert (
@@ -30,10 +34,12 @@ class CartPage(BasePage):
         cart_items[item].click()
         return product_to_add
 
+    @allure.step("Проверка добавленного продукта в корзине")
     def verify_product_in_cart(self, expected_product_name):
         cart = self.find_element(*self.SHOPPING_CART_LINK)
         ActionChains(self.browser).move_to_element(cart).perform()
         self.find_element(By.XPATH, "//button[@class='btn-close']").click()
         self.find_element(*self.SHOPPING_CART_LINK).click()
         product_name = self.find_element(*self.PRODUCT_NAME)
+        self.logger.info("Продукт %s есть в корзине", product_name)
         assert product_name.text == expected_product_name, "Товар не найден в корзине"
