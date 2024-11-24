@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
+from selenium.webdriver.edge.options import Options as EdgeOptions
 
 
 def pytest_addoption(parser):
@@ -104,6 +105,13 @@ def browser(request):
             options.add_argument("--headless")
         if not executor:
             driver = webdriver.Firefox(options=options)
+    elif browser_name in ["edge", "Edge", "MicrosoftEdge" ]:
+        browser_name = "MicrosoftEdge"
+        options = EdgeOptions()
+        if headless:
+            options.add_argument("headless=new")
+        if not executor:
+            driver = webdriver.Edge(options=options)
     elif browser_name in ["ya", "yandex"]:
         browser_name = "yandex"
         options = ChromeOptions()
@@ -118,16 +126,16 @@ def browser(request):
     caps = {
         "browserName": browser_name,
         "browserVersion": version,
-        "selenoid:options": {
-            "enableVNC": vnc,
-            "name": request.node.name,
-            "screenResolution": "1280x2000",
-            "enableVideo": video,
-            "enableLog": logs,
-            "timeZone": "Europe/Moscow",
-            "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"],
-        },
-        "acceptInsecureCerts": True,
+        # "selenoid:options": {
+        #     "enableVNC": vnc,
+        #     "name": request.node.name,
+        #     "screenResolution": "1280x2000",
+        #     "enableVideo": video,
+        #     "enableLog": logs,
+        #     "timeZone": "Europe/Moscow",
+        #     "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"],
+        # },
+        # "acceptInsecureCerts": True,
     }
 
     if executor:
