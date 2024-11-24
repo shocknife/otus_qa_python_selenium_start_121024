@@ -1,6 +1,5 @@
 import json
 import logging
-
 import allure
 import pytest
 import datetime
@@ -12,17 +11,37 @@ from selenium.webdriver.firefox.options import Options as FFOptions
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", default="chrome")
-    parser.addoption("--base_url", default="http://192.168.1.242:8082")
-    parser.addoption("--yad", default='D:\\Coding\\Drivers\\yandexdriver.exe')
-    parser.addoption("--headless", action="store_true")
-    parser.addoption("--log_level", action="store", default="WARNING")
-    parser.addoption("--executor", default=None, nargs="?", const="127.0.0.1", help="Executor address (default: 127.0.0.1 if not specified)")
-    parser.addoption("--mobile", action="store_true")
-    parser.addoption("--vnc", action="store_true")
-    parser.addoption("--logs", action="store_true")
-    parser.addoption("--video", action="store_true")
-    parser.addoption("--bv")
+    parser.addoption("--browser", default="chrome", help="Browser for tests")
+    parser.addoption(
+        "--base_url",
+        default="http://192.168.1.242:8082",
+        help="Base URL of the application",
+    )
+    parser.addoption(
+        "--yad",
+        default="D:\\Coding\\Drivers\\yandexdriver.exe",
+        help="Path to YandexDriver",
+    )
+    parser.addoption(
+        "--headless", action="store_true", help="Run browser in headless mode"
+    )
+    parser.addoption(
+        "--log_level", action="store", default="WARNING", help="Set the logging level"
+    )
+    parser.addoption(
+        "--executor",
+        default=None,
+        nargs="?",
+        const="127.0.0.1",
+        help="Executor address (default: 127.0.0.1 if not specified)",
+    )
+    parser.addoption(
+        "--mobile", action="store_true", help="Run tests on mobile emulation"
+    )
+    parser.addoption("--vnc", action="store_true", help="Enable VNC server")
+    parser.addoption("--logs", action="store_true", help="Enable logging of tests")
+    parser.addoption("--video", action="store_true", help="Record video during tests")
+    parser.addoption("--bv", help="Browser version")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -57,6 +76,7 @@ def browser(request):
         executor_url = f"http://{executor}:4444/wd/hub"
 
     log_dir = os.path.join(os.path.dirname(__file__), "logs")
+
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logger = logging.getLogger(request.node.name)
@@ -71,47 +91,50 @@ def browser(request):
     )
 
     if browser_name in ["ch", "chrome"]:
+        browser_name = "chrome"
         options = ChromeOptions()
         if headless:
             options.add_argument("headless=new")
         if not executor:
             driver = webdriver.Chrome(options=options)
     elif browser_name in ["ff", "firefox"]:
+        browser_name = "firefox"
         options = FFOptions()
         if headless:
             options.add_argument("--headless")
         if not executor:
             driver = webdriver.Firefox(options=options)
     elif browser_name in ["ya", "yandex"]:
+        browser_name = "yandex"
         options = ChromeOptions()
         if headless:
             options.add_argument("headless=new")
         if not executor:
-           options.binary_location = "C:\\Users\\PC\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe"
-           driver = webdriver.Chrome(options=options, service=Service(executable_path=yad))
+            options.binary_location = "C:\\Users\\PC\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe"
+            driver = webdriver.Chrome(
+                options=options, service=Service(executable_path=yad)
+            )
 
     caps = {
         "browserName": browser_name,
         "browserVersion": version,
-        # "selenoid:options": {
-        #      "enableVNC": vnc,
-        #     "name": request.node.name,
-        #     "screenResolution": "1280x2000",
-        #     "enableVideo": video,
-        #     "enableLog": logs,
-        #     "timeZone": "Europe/Moscow",
-        #     "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"]
-        # },
-        # "acceptInsecureCerts": True,
+        "selenoid:options": {
+            "enableVNC": vnc,
+            "name": request.node.name,
+            "screenResolution": "1280x2000",
+            "enableVideo": video,
+            "enableLog": logs,
+            "timeZone": "Europe/Moscow",
+            "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"],
+        },
+        "acceptInsecureCerts": True,
     }
+
     if executor:
         for k, v in caps.items():
             options.set_capability(k, v)
 
-        driver = webdriver.Remote(
-            command_executor=executor_url,
-            options=options
-        )
+        driver = webdriver.Remote(command_executor=executor_url, options=options)
 
     allure.attach(
         name=driver.session_id,
