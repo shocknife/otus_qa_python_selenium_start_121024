@@ -105,7 +105,7 @@ def browser(request):
             options.add_argument("--headless")
         if not executor:
             driver = webdriver.Firefox(options=options)
-    elif browser_name in ["edge", "Edge", "MicrosoftEdge" ]:
+    elif browser_name in ["edge", "Edge", "MicrosoftEdge"]:
         browser_name = "MicrosoftEdge"
         options = EdgeOptions()
         if headless:
