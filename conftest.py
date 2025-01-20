@@ -43,6 +43,7 @@ def pytest_addoption(parser):
     parser.addoption("--logs", action="store_true", help="Enable logging of tests")
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
+    parser.addoption('--no-sandbox')
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

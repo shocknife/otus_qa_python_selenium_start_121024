@@ -1,0 +1,124 @@
+services:
+
+  selenoid:
+    container_name: selenoid
+    image: "aerokube/selenoid:latest"
+    networks:
+      - selenoid
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./config/browsers.json:/etc/selenoid/browsers.json:ro
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command:
+      - "-container-network=selenoid"
+      - "limit=12"
+
+  ggr:
+    container_name: ggr
+    depends_on:
+      - selenoid
+    image: "aerokube/ggr:1.7.2"
+    ports:
+      - ":8080"  # Порт для доступа к GGR
+    networks:
+      - selenoid
+    volumes:
+      - "/etc/grid-router:/etc/grid-router/:ro"
+    command:
+      - "-guests-allowed"
+      - "-guests-quota=test"
+      - "-verbose"
+      - "quotaDir=/etc/grid-router/quota"
+
+  ggr-ui:
+    container_name: ggr-ui
+    depends_on:
+      - ggr
+    image: "aerokube/ggr-ui:1.2.0"
+    ports:
+      - ":8080"
+    networks:
+      - selenoid
+    volumes:
+      - "/etc/grid-router/quota:/etc/grid-router/quota:ro"
+
+  selenoid-ui:
+    container_name: selenoid-ui-1-10-11
+    depends_on:
+      - ggr-ui
+    image: "aerokube/selenoid-ui:1.10.11"
+    ports:
+      - ":8080"
+    networks:
+      - selenoid
+    command:
+      - "--selenoid-uri"
+      - "http://ggr-ui:8888"
+
+  phpadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    networks:
+      - selenoid
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=bn_opencart
+    ports:
+      - '8889:80'
+
+  mariadb:
+    image: docker.io/bitnami/mariadb:11.2
+    networks:
+      - selenoid
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_opencart
+      - MARIADB_DATABASE=bitnami_opencart
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+    ports:
+      - '3306:3306'
+
+  opencart:
+    image: docker.io/bitnami/opencart:4.0.2-3
+    networks:
+      - selenoid
+    ports:
+      - '8082:8080'
+      - '443:8443'
+    environment:
+      - OPENCART_HOST=192.168.1.242:8082
+      - OPENCART_DATABASE_HOST=mariadb
+      - OPENCART_DATABASE_PORT_NUMBER=3306
+      - OPENCART_DATABASE_USER=bn_opencart
+      - OPENCART_DATABASE_NAME=bitnami_opencart
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - 'opencart_data:/bitnami/opencart'
+      - 'opencart_storage_data:/bitnami/opencart_storage/'
+    depends_on:
+      - mariadb
+
+  tests:  # Переименуйте секцию на tests или test
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - opencart
+    volumes:
+      - .:/app  # Монтируем основной проект в контейнер с тестами
+    command: [ "pytest", "-v" ]  # Запускаем тесты с параметрами
+
+networks:
+  selenoid:
+    name: selenoid
+    external: true
+
+volumes:
+  mariadb_data:
+    driver: local
+  opencart_data:
+    driver: local
+  opencart_storage_data:
+    driver: local

@@ -1,0 +1,8 @@
+.venv
+allure-results
+logs
+*.md
+__pycache__/
+.git/
+.idea/
+env
