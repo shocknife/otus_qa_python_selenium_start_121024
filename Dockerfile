@@ -1,10 +1,12 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 WORKDIR /app
 
 VOLUME /allure-results
 
-RUN apk update && apk upgrade && apk add bash
+RUN apt update && apt upgrade -y && apt install -y bash
+
+RUN apt update && apt install -y netcat-traditional
 
 COPY requirements.txt .
 
@@ -16,4 +18,4 @@ RUN chmod +x wait-for-it.sh
 
 LABEL author=shocknife
 
-CMD ["./wait-for-it.sh", "opencart", "8080", "pytest", "-v", "tests/*", "--no-sandbox", "--headless", "--base_url", "http://localhost:8080", "--browser", "chrome", "--browser_version", "128.0", "--executor", "selenoid"]
+#CMD ["./wait-for-it.sh", "172.19.0.4", "8080", "pytest", "-v", "tests/*", "--headless", "--base_url", "http://172.19.0.4:8080", "--browser", "chrome", "--executor", "172.19.0.2"]

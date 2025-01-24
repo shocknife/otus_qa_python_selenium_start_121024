@@ -2,7 +2,7 @@ services:
 
   selenoid:
     container_name: selenoid
-    image: "aerokube/selenoid:latest"
+    image: "aerokube/selenoid:1.11.3"
     networks:
       - selenoid
     ports:
@@ -10,53 +10,22 @@ services:
     volumes:
       - ./config/browsers.json:/etc/selenoid/browsers.json:ro
       - "/var/run/docker.sock:/var/run/docker.sock"
-    command:
-      - "-container-network=selenoid"
-      - "limit=12"
-
-  ggr:
-    container_name: ggr
-    depends_on:
-      - selenoid
-    image: "aerokube/ggr:1.7.2"
-    ports:
-      - ":8080"  # Порт для доступа к GGR
-    networks:
-      - selenoid
-    volumes:
-      - "/etc/grid-router:/etc/grid-router/:ro"
-    command:
-      - "-guests-allowed"
-      - "-guests-quota=test"
-      - "-verbose"
-      - "quotaDir=/etc/grid-router/quota"
-
-  ggr-ui:
-    container_name: ggr-ui
-    depends_on:
-      - ggr
-    image: "aerokube/ggr-ui:1.2.0"
-    ports:
-      - ":8080"
-    networks:
-      - selenoid
-    volumes:
-      - "/etc/grid-router/quota:/etc/grid-router/quota:ro"
+    command: ["-container-network=selenoid", "limit=12", "-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "selenoid"]
 
   selenoid-ui:
-    container_name: selenoid-ui-1-10-11
+    container_name: selenoid-ui
     depends_on:
-      - ggr-ui
+      - selenoid
     image: "aerokube/selenoid-ui:1.10.11"
     ports:
-      - ":8080"
+      - "8091:8080"
     networks:
       - selenoid
-    command:
-      - "--selenoid-uri"
-      - "http://ggr-ui:8888"
+    command: [ "--selenoid-uri", "http://selenoid:4444", "-listen", ":8090" ]
+
 
   phpadmin:
+    container_name: phpadmin-1
     image: 'phpmyadmin/phpmyadmin:latest'
     networks:
       - selenoid
@@ -68,6 +37,7 @@ services:
       - '8889:80'
 
   mariadb:
+    container_name: mariadb-1
     image: docker.io/bitnami/mariadb:11.2
     networks:
       - selenoid
@@ -79,8 +49,11 @@ services:
       - 'mariadb_data:/bitnami/mariadb'
     ports:
       - '3306:3306'
+    depends_on:
+      - selenoid
 
   opencart:
+    container_name: opencart-1
     image: docker.io/bitnami/opencart:4.0.2-3
     networks:
       - selenoid
@@ -98,17 +71,19 @@ services:
       - 'opencart_data:/bitnami/opencart'
       - 'opencart_storage_data:/bitnami/opencart_storage/'
     depends_on:
-      - mariadb
+      - selenoid
 
-  tests:  # Переименуйте секцию на tests или test
+  tests:
+    container_name: tests
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
+    image: autotests:1.0.1
     depends_on:
       - opencart
-    volumes:
-      - .:/app  # Монтируем основной проект в контейнер с тестами
-    command: [ "pytest", "-v" ]  # Запускаем тесты с параметрами
+    networks:
+      - selenoid
+    command: ./wait-for-it.sh opencart 8080 pytest -v tests/* --headless --base_url http://opencart:8080 --browser chrome --bv 128 --executor selenoid
 
 networks:
   selenoid:
