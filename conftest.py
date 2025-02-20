@@ -57,23 +57,32 @@ def pytest_runtest_makereport(item, call):
 
     if rep.when == "call" and rep.outcome == "failed":
         try:
-            driver = item.funcargs["browser"]
+            driver = item.funcargs["driver"]  # browser
 
             # Создание папки для скриншотов, если она не существует
             screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
             os.makedirs(screenshots_dir, exist_ok=True)
 
+            # Получение текущей даты для создания подкаталога
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            date_dir = os.path.join(screenshots_dir, current_date)
+            os.makedirs(date_dir, exist_ok=True)
+
             # Формирование имени файла с датой и временем
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             screenshot_path = os.path.join(
-                screenshots_dir, f"{item.name}_{timestamp}.png"
+                date_dir, f"{item.name}_{timestamp}_{item.status}.png"
             )
 
             # Создание скриншота
             driver.save_screenshot(screenshot_path)
-            print(f"Скриншот сохранен: {screenshot_path}")
+
+            logger = driver.logger
+            logger.info(f"Скриншот сохранен: {screenshot_path}")
         except Exception as e:
-            print(f"Не удалось создать скриншот: {e}")
+            driver = item.funcargs["browser"]
+            logger = driver.logger
+            logger.info(f"Не удалось создать скриншот: {e}")
 
 
 @pytest.fixture()
