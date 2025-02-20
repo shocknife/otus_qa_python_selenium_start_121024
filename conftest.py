@@ -43,7 +43,7 @@ def pytest_addoption(parser):
     parser.addoption("--logs", action="store_true", help="Enable logging of tests")
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
-    parser.addoption('--no-sandbox')
+    parser.addoption("--no-sandbox")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -55,23 +55,26 @@ def pytest_runtest_makereport(item, call):
     else:
         item.status = "passed"
 
-    if rep.when == "call" and  rep.outcome == "failed":
+    if rep.when == "call" and rep.outcome == "failed":
         try:
-            driver = item.funcargs['browser']
+            driver = item.funcargs["browser"]
 
             # Создание папки для скриншотов, если она не существует
-            screenshots_dir = os.path.join(os.path.dirname(__file__), 'screenshots')
+            screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
             os.makedirs(screenshots_dir, exist_ok=True)
 
             # Формирование имени файла с датой и временем
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_path = os.path.join(screenshots_dir, f"{item.name}_{timestamp}.png")
+            screenshot_path = os.path.join(
+                screenshots_dir, f"{item.name}_{timestamp}.png"
+            )
 
             # Создание скриншота
             driver.save_screenshot(screenshot_path)
             print(f"Скриншот сохранен: {screenshot_path}")
         except Exception as e:
             print(f"Не удалось создать скриншот: {e}")
+
 
 @pytest.fixture()
 def browser(request):
