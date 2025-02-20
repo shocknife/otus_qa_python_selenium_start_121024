@@ -45,8 +45,8 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
       - MARIADB_USER=bn_opencart
       - MARIADB_DATABASE=bitnami_opencart
-    volumes:
-      - 'mariadb_data:/bitnami/mariadb'
+#    volumes:
+#      - 'mariadb_data:/bitnami/mariadb'
     ports:
       - '3306:3306'
     depends_on:
@@ -67,23 +67,23 @@ services:
       - OPENCART_DATABASE_USER=bn_opencart
       - OPENCART_DATABASE_NAME=bitnami_opencart
       - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - 'opencart_data:/bitnami/opencart'
-      - 'opencart_storage_data:/bitnami/opencart_storage/'
+#    volumes:
+#      - 'opencart_data:/bitnami/opencart'
+#      - 'opencart_storage_data:/bitnami/opencart_storage/'
     depends_on:
-      - selenoid
+      - mariadb
 
-  tests:
-    container_name: tests
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: autotests:1.0.1
-    depends_on:
-      - opencart
-    networks:
-      - selenoid
-    command: ./wait-for-it.sh opencart 8080 pytest -v tests/* --headless --base_url http://opencart:8080 --browser chrome --bv 128 --executor selenoid
+#  tests:
+#    container_name: tests
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: autotests:1.0.1
+#    depends_on:
+#      - opencart
+#    networks:
+#      - selenoid
+#    command: ./wait-for-it.sh opencart 8080 pytest -v tests/* --headless --base_url http://opencart:8080 --browser chrome --bv 128 --executor selenoid
 
 networks:
   selenoid:
