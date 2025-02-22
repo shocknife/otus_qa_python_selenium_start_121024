@@ -10,6 +10,13 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
+from data.create_user import CreateUserData
+from page_objects.admin_page import AdminPage
+from page_objects.app import Application
+from page_objects.base_page import BasePage
+from page_objects.main_page import MainPage
+from page_objects.register_user_page import RegistrationPage
+
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", help="Browser for tests")
@@ -213,3 +220,22 @@ def browser(request):
         )
 
     request.addfinalizer(fin)
+
+
+@pytest.fixture
+def create_new_user(browser):
+    register_account = RegistrationPage(browser)
+    main_page = MainPage(browser)
+    admin_panel = AdminPage(browser)
+    alert_delete = BasePage(browser)
+    main_page.open_main_page()
+    main_page.find_user()
+    new_person = CreateUserData.create_random()
+    register_account.created_account(new_person)
+    fixture = Application(driver=browser, data=new_person)
+    yield fixture
+    admin_panel.go_to_administration()
+    admin_panel.login("user", "bitnami")
+    admin_panel.delete_user(new_person)
+    alert_delete.alert_window()
+    admin_panel.assert_delete_user()

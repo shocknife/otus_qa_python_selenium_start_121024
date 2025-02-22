@@ -4,3 +4,4 @@ ruff==0.6.9
 allure-pytest==2.13.5
 allure-python-commons~=2.13.5
 pytest-xdist==3.6.1
+Faker~=36.1.1

@@ -12,6 +12,9 @@ class CatalogPage(BasePage):
     BUTTON_LIST = (By.ID, "button-list")
     BUTTON_GRID = (By.ID, "button-grid")
     INPUT_SORT = (By.ID, "input-sort")
+    SORT_NAME_DESC_Z_A = (By.XPATH, "//*[text()='Name (Z - A)']")
+    SHOW = (By.XPATH, "//*[@id='input-limit']")
+    SHOW_LIMIT_25 = (By.XPATH, "//*[@id='input-limit']/option[text()='25']")
 
     @allure.step("Выполняется вход на страницу")
     def open_main_page_for_catalog(self):
@@ -34,6 +37,24 @@ class CatalogPage(BasePage):
         assert (
             "catalog" in self.browser.current_url
         ), "URL страницы не содержит 'catalog'"
+
+    @allure.step("Проверка количества карточек на странице каталога")
+    def check_product_carts(self):
+        return self.find_elements(*self.PRODUCT_THUMB)
+
+    @allure.step("Установка количества отображаемых карточек")
+    def show_limit_carts(self):
+        self.find_element(*self.SHOW).click()
+        self.find_element(*self.SHOW_LIMIT_25).click()
+
+    @allure.step("Выполнение сортировки на странице каталога")
+    def sort_by_name(self):
+        self.find_element(*self.INPUT_SORT).click()
+        self.find_element(*self.SORT_NAME_DESC_Z_A).click()
+
+    @allure.step("Выполняется вход на страницу")
+    def open_catalog(self, uri=None):
+        super().open(self.browser.base_url + uri)
 
 
 class VerifyPrice(CatalogPage, MainPage):
