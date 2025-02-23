@@ -10,6 +10,14 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
+from data.create_product import CreateProductData
+from data.create_user import CreateUserData
+from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
+from page_objects.app import Application
+from page_objects.base_page import BasePage
+from page_objects.main_page import MainPage
+from page_objects.register_user_page import RegistrationPage
+
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", help="Browser for tests")
@@ -43,7 +51,7 @@ def pytest_addoption(parser):
     parser.addoption("--logs", action="store_true", help="Enable logging of tests")
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
-    parser.addoption('--no-sandbox')
+    parser.addoption("--no-sandbox")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -54,6 +62,36 @@ def pytest_runtest_makereport(item, call):
         item.status = "failed"
     else:
         item.status = "passed"
+
+    # Создание скриншота
+    if rep.when == "call" and rep.outcome == "failed":
+        try:
+            driver = item.funcargs["browser"]
+
+            screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
+            os.makedirs(screenshots_dir, exist_ok=True)
+
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            date_dir = os.path.join(screenshots_dir, current_date)
+            os.makedirs(date_dir, exist_ok=True)
+
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_path = os.path.join(
+                date_dir, f"{item.name}_{timestamp}_{item.status}.png"
+            )
+
+            driver.save_screenshot(screenshot_path)
+
+            logger = driver.logger
+            logger.info(f"Скриншот сохранен: {screenshot_path}")
+        except Exception as e:
+            driver = item.funcargs["browser"]
+            logger = driver.logger
+            logger.info(f"Не удалось создать скриншот: {e}")
+
+    # Создаем папку для результатов отчетов
+    allure_results_dir = os.path.join(os.path.dirname(__file__), "allure-results")
+    os.makedirs(allure_results_dir, exist_ok=True)
 
 
 @pytest.fixture()
@@ -183,3 +221,42 @@ def browser(request):
         )
 
     request.addfinalizer(fin)
+
+
+@pytest.fixture
+def create_new_user(browser):
+    register_account = RegistrationPage(browser)
+    main_page = MainPage(browser)
+    admin_panel = AdminPage(browser)
+    alert_delete = BasePage(browser)
+    main_page.open_main_page()
+    main_page.find_user()
+    new_person = CreateUserData.create_random()
+    register_account.created_account(new_person)
+    fixture = Application(driver=browser, data=new_person)
+    yield fixture
+    admin_panel.go_to_administration()
+    admin_panel.login()
+    admin_panel.delete_user(new_person)
+    alert_delete.alert_window()
+    admin_panel.assert_delete_user()
+
+
+@pytest.fixture
+def create_new_product(browser):
+    admin_panel = AdminPage(browser)
+    add_product = AddProductPage(browser)
+    data = CreateProductData.create_random()
+    product = AdminProductPage(browser)
+    admin_panel.go_to_administration()
+    admin_panel.login()
+    admin_panel.open_product_page()
+    product.step_add_new_product(browser)
+    add_product.send_required_fields_general_tab(data)
+    add_product.send_required_fields_model_tab(data)
+    add_product.send_required_fields_seo_tab(data)
+    add_product.safe_product(browser)
+    add_product.back_to_products(browser)
+    product.filter_name(data)
+    assert data.name in product.assert_product()
+    return browser, data
