@@ -10,8 +10,9 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
+from data.create_product import CreateProductData
 from data.create_user import CreateUserData
-from page_objects.admin_page import AdminPage
+from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
 from page_objects.app import Application
 from page_objects.base_page import BasePage
 from page_objects.main_page import MainPage
@@ -235,7 +236,27 @@ def create_new_user(browser):
     fixture = Application(driver=browser, data=new_person)
     yield fixture
     admin_panel.go_to_administration()
-    admin_panel.login("user", "bitnami")
+    admin_panel.login()
     admin_panel.delete_user(new_person)
     alert_delete.alert_window()
     admin_panel.assert_delete_user()
+
+
+@pytest.fixture
+def create_new_product(browser):
+    admin_panel = AdminPage(browser)
+    add_product = AddProductPage(browser)
+    data = CreateProductData.create_random()
+    product = AdminProductPage(browser)
+    admin_panel.go_to_administration()
+    admin_panel.login()
+    admin_panel.open_product_page()
+    product.step_add_new_product(browser)
+    add_product.send_required_fields_general_tab(data)
+    add_product.send_required_fields_model_tab(data)
+    add_product.send_required_fields_seo_tab(data)
+    add_product.safe_product(browser)
+    add_product.back_to_products(browser)
+    product.filter_name(data)
+    assert data.name in product.assert_product()
+    return browser, data
