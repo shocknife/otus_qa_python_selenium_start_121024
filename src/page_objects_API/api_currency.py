@@ -1,7 +1,11 @@
+import allure
+
+
 class ApiCurrency:
     def __init__(self, client):
         self.client = client
 
+    @allure.title("Установка валюты")
     def post_currency(self, currency: str):
         data = {"currency": currency}
         response = self.client.session.post(

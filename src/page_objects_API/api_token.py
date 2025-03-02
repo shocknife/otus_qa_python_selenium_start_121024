@@ -17,8 +17,10 @@ class ApiToken:
     def __init__(self, base_url_api, username, key):
         self.base_url_api = base_url_api
         self.session = requests.Session()
+        logger.debug("Выполняется авторизация пользователя")
         params = {"username": username, "key": key}
         response = requests.post(f"{self.base_url_api}api/account/login", data=params)
+        logger.debug("Авторизация пользователя прошла успешно")
         json_response = response.json()
         assert response.status_code == HTTPStatus.OK
         assert response.json().get("api_token")

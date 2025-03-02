@@ -1,7 +1,11 @@
+import allure
+
+
 class ApiCustomer:
     def __init__(self, client):
         self.client = client
 
+    @allure.title("Добавление клиента")
     def post_add_customer(
         self, firstname: str, lastname: str, email: str, telephone: str
     ):

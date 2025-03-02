@@ -1,13 +1,18 @@
+import allure
+
+
 class ApiPayAddress:
     def __init__(self, client):
         self.client = client
 
+    @allure.title("Просмотр списка методов оплаты")
     def get_payment_method(self):
         response = self.client.session.get(
             f"{self.client.base_url_api}api/sale/payment_method"
         )
         return response
 
+    @allure.title("Сохранение метода оплаты")
     def post_add_method_payment(self, payment_method):
         data = {"payment_method": payment_method}
         response = self.client.session.post(
@@ -15,6 +20,7 @@ class ApiPayAddress:
         )
         return response
 
+    @allure.title("Добавление адреса оплаты")
     def post_payment_address(
         self,
         firstname: str,

@@ -1,13 +1,18 @@
+import allure
+
+
 class ApiShipMethod:
     def __init__(self, client):
         self.client = client
 
+    @allure.title("Загрузка списка методов доставки")
     def get_shipping_method(self):
         response = self.client.session.get(
             f"{self.client.base_url_api}api/sale/shipping_method"
         )
         return response
 
+    @allure.title("Сохранение метода доставки")
     def post_shipping_method_save(self, shipping_method):
         data = {"shipping_method": shipping_method}
         response = self.client.session.post(
@@ -15,6 +20,7 @@ class ApiShipMethod:
         )
         return response
 
+    @allure.title("Установка метода доставки по умолчанию")
     def post_shipping_address(
         self,
         firstname: str,
