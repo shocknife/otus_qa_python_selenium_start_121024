@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.product_card_page import ProductPage
+from src.page_objects_UI.product_card_page import ProductPage
 
 
 @allure.title("Проверка элементов на странице продукта")

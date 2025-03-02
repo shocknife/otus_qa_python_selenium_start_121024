@@ -13,11 +13,11 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from config.configuration import BASE_URL
 from data.create_product import CreateProductData
 from data.create_user import CreateUserData
-from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
-from page_objects.app import Application
-from page_objects.base_page import BasePage
-from page_objects.main_page import MainPage
-from page_objects.register_user_page import RegistrationPage
+from src.page_objects_UI.admin_page import AdminPage, AddProductPage, AdminProductPage
+from src.page_objects_UI.app import Application
+from src.page_objects_UI.base_page import BasePage
+from src.page_objects_UI.main_page import MainPage
+from src.page_objects_UI.register_user_page import RegistrationPage
 
 
 def pytest_addoption(parser):
@@ -98,6 +98,7 @@ def pytest_runtest_makereport(item, call):
     allure_results_dir = os.path.join(os.path.dirname(__file__), "allure-results")
     os.makedirs(allure_results_dir, exist_ok=True)
 
+# Настройка параметров для запуска тестов UI
 
 @pytest.fixture()
 def browser(request):
@@ -265,3 +266,5 @@ def create_new_product(browser):
     product.filter_name(data)
     assert data.name in product.assert_product()
     return browser, data
+
+# Настройка параметров для запуска тестов API

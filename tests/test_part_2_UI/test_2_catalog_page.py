@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.catalog_page import CatalogPage
+from src.page_objects_UI.catalog_page import CatalogPage
 
 
 @allure.title("Проверка элементов на странице каталога")

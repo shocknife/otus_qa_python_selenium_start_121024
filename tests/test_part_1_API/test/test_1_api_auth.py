@@ -2,7 +2,7 @@ from http import HTTPStatus
 import allure
 import pytest
 from config.configuration import API_USERNAME, API_KEY
-from page_objects_API.api_auth import ApiAuth
+from src.page_objects_API.api_auth import ApiAuth
 
 
 

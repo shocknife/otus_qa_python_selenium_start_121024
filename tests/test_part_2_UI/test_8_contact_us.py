@@ -2,8 +2,8 @@ import allure
 import pytest
 
 from data.create_contact_us import CreateContactUsData
-from page_objects.contact_us_page import ContactUsPage
-from page_objects.main_page import MainPage
+from src.page_objects_UI.contact_us_page import ContactUsPage
+from src.page_objects_UI.main_page import MainPage
 
 
 @allure.title("Проверка корректной отправки запроса")

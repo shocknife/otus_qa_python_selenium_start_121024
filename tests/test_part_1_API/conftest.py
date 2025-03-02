@@ -2,7 +2,7 @@ import pytest
 import allure
 import logging
 from config.configuration import API_USERNAME, API_KEY, API_BASE_URL
-from page_objects_API.api_token import ApiToken
+from src.page_objects_API.api_token import ApiToken
 
 
 def pytest_addoption(parser):

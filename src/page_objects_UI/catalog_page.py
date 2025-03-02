@@ -1,7 +1,7 @@
 import allure
 from selenium.webdriver.common.by import By
-from page_objects.base_page import BasePage
-from page_objects.main_page import MainPage
+from src.page_objects_UI.base_page import BasePage
+from src.page_objects_UI.main_page import MainPage
 
 
 class CatalogPage(BasePage):

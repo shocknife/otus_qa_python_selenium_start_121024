@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.main_page import MainPage
+from src.page_objects_UI.main_page import MainPage
 
 
 @allure.title("Проверка изменения отображения цены в валюте на главной странице")

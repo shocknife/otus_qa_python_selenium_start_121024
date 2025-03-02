@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.cart_page import CartPage
+from src.page_objects_UI.cart_page import CartPage
 
 
 @allure.title("Проверка добавления товара в корзину, и проверка что они там есть")

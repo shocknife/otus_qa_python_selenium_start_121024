@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.catalog_page import VerifyPrice
+from src.page_objects_UI.catalog_page import VerifyPrice
 
 
 @allure.title(

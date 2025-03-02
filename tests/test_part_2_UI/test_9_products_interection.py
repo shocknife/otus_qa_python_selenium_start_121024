@@ -1,8 +1,8 @@
 import allure
 
 from data.create_product import CreateProductData
-from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
-from page_objects.base_page import BasePage
+from src.page_objects_UI.admin_page import AdminPage, AddProductPage, AdminProductPage
+from src.page_objects_UI.base_page import BasePage
 
 
 @allure.title("Добавление нового товара")

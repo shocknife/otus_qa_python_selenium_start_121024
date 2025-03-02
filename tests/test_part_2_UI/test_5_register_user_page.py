@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.register_user_page import RegistrationPage
+from src.page_objects_UI.register_user_page import RegistrationPage
 
 
 @allure.title("Проверка элементов на странице регистрации пользователя")

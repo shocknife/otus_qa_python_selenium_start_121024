@@ -1,6 +1,6 @@
 import allure
 
-from page_objects.admin_page import AdminPage
+from src.page_objects_UI.admin_page import AdminPage
 
 
 @allure.title("Проверка элементов на странице входа в администратора")

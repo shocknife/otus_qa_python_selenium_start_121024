@@ -1,7 +1,7 @@
 import allure
 
-from page_objects.main_page import MainPage
-from page_objects.register_user_page import RegistrationPage
+from src.page_objects_UI.main_page import MainPage
+from src.page_objects_UI.register_user_page import RegistrationPage
 
 
 @allure.title("Проверка работоспособности wish list")

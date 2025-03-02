@@ -2,13 +2,12 @@ from http import HTTPStatus
 
 import requests
 import logging
-from page_objects_API.api_cart import ApiCart
-from page_objects_API.api_currency import ApiCurrency
-from page_objects_API.api_customer import ApiCustomer
-from page_objects_API.api_order import ApiOrder
-from page_objects_API.api_payment_address import ApiPayAddress
-from page_objects_API.api_ship_address import ApiShipMethod
-from page_objects_API.api_uri import ApiUri
+from src.page_objects_API.api_cart import ApiCart
+from src.page_objects_API.api_currency import ApiCurrency
+from src.page_objects_API.api_customer import ApiCustomer
+from src.page_objects_API.api_order import ApiOrder
+from src.page_objects_API.api_payment_address import ApiPayAddress
+from src.page_objects_API.api_ship_address import ApiShipMethod
 
 
 logger = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ class ApiToken:
         self.session = requests.Session()
         params = {'username': username,
                   'key': key}
-        response = requests.post(f"{self.base_url_api}{ApiUri.LOGIN}", data=params)
+        response = requests.post(f"{self.base_url_api}api/account/login", data=params)
         json_response = response.json()
         assert response.status_code == HTTPStatus.OK
         assert response.json().get("api_token")

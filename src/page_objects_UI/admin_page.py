@@ -5,7 +5,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
 
-from page_objects.base_page import BasePage
+from src.page_objects_UI.base_page import BasePage
 
 
 class AdminPage(BasePage):
