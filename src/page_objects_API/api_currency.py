@@ -1,6 +1,3 @@
-import conftest
-
-
 class ApiCurrency:
     def __init__(self, client):
         self.client = client

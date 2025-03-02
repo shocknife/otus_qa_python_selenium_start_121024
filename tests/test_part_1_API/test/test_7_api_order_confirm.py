@@ -1,30 +1,15 @@
 import allure
 
 import pytest
-from faker import Faker
 
-fake = Faker()
+from data.create_data_for_order import CreateDataForOrder
 
-
-test_data = (
-    fake.first_name(),
-    fake.last_name(),
-    fake.street_address(),
-    fake.city(),
-    fake.random_int(min=100, max=999),
-    fake.random_int(min=100, max=999),
-    fake.email(),
-    fake.phone_number(),
-    "40",
-    "1",
-    "cod.cod",
-    "flat.flat",
-)
+test_data = CreateDataForOrder.create_random()
 
 
 @allure.step("Проверка подтверждения заказа")
 @pytest.mark.parametrize(
-    "firstname, lastname,street_address_1, city, country_code, area_code, email, telephone, product_id, quantity, payment_method, shipping_method",
+    "firstname, lastname, street_address_1, city, country_code, area_code, email, telephone, product_id, quantity, payment_method, shipping_method",
     [test_data],
 )
 def test_post_order_add(
