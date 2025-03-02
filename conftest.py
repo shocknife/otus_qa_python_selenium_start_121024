@@ -10,20 +10,22 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
+from config.configuration import BASE_URL, API_BASE_URL, API_USERNAME, API_KEY
 from data.create_product import CreateProductData
 from data.create_user import CreateUserData
-from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
-from page_objects.app import Application
-from page_objects.base_page import BasePage
-from page_objects.main_page import MainPage
-from page_objects.register_user_page import RegistrationPage
+from src.page_objects_API.api_token import ApiToken
+from src.page_objects_UI.admin_page import AdminPage, AddProductPage, AdminProductPage
+from src.page_objects_UI.app import Application
+from src.page_objects_UI.base_page import BasePage
+from src.page_objects_UI.main_page import MainPage
+from src.page_objects_UI.register_user_page import RegistrationPage
 
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", help="Browser for tests")
     parser.addoption(
         "--base_url",
-        default="http://192.168.1.242:8082",
+        default=BASE_URL,
         help="Base URL of the application",
     )
     parser.addoption(
@@ -52,6 +54,13 @@ def pytest_addoption(parser):
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
     parser.addoption("--no-sandbox")
+    parser.addoption(
+        "--url_api", default=API_BASE_URL, help="BaseUrl for api_tests API"
+    )
+    parser.addoption(
+        "--username", default=API_USERNAME, help="Пользователь по умолчанию в админке"
+    )
+    parser.addoption("--key", default=API_KEY, help="Ключ по умолчанию в админке")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -66,24 +75,30 @@ def pytest_runtest_makereport(item, call):
     # Создание скриншота
     if rep.when == "call" and rep.outcome == "failed":
         try:
-            driver = item.funcargs["browser"]
+            if "browser" in item.funcargs:
+                driver = item.funcargs["browser"]
 
-            screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
-            os.makedirs(screenshots_dir, exist_ok=True)
+                screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
+                os.makedirs(screenshots_dir, exist_ok=True)
 
-            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            date_dir = os.path.join(screenshots_dir, current_date)
-            os.makedirs(date_dir, exist_ok=True)
+                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                date_dir = os.path.join(screenshots_dir, current_date)
+                os.makedirs(date_dir, exist_ok=True)
 
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_path = os.path.join(
-                date_dir, f"{item.name}_{timestamp}_{item.status}.png"
-            )
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                screenshot_path = os.path.join(
+                    date_dir, f"{item.name}_{timestamp}_{item.status}.png"
+                )
 
-            driver.save_screenshot(screenshot_path)
+                driver.save_screenshot(screenshot_path)
 
-            logger = driver.logger
-            logger.info(f"Скриншот сохранен: {screenshot_path}")
+                logger = driver.logger
+                logger.info(f"Скриншот сохранен: {screenshot_path}")
+            else:
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Тест {item.name} не использует браузер, скриншот не создан."
+                )
         except Exception as e:
             driver = item.funcargs["browser"]
             logger = driver.logger
@@ -92,6 +107,9 @@ def pytest_runtest_makereport(item, call):
     # Создаем папку для результатов отчетов
     allure_results_dir = os.path.join(os.path.dirname(__file__), "allure-results")
     os.makedirs(allure_results_dir, exist_ok=True)
+
+
+# Настройка параметров для запуска тестов UI
 
 
 @pytest.fixture()
@@ -260,3 +278,33 @@ def create_new_product(browser):
     product.filter_name(data)
     assert data.name in product.assert_product()
     return browser, data
+
+
+# Настройка параметров для запуска тестов API
+
+
+@pytest.fixture(scope="session")
+def base_url_api(request):
+    return request.config.getoption("--url_api")
+
+
+@pytest.fixture(scope="session")
+def username(request):
+    return request.config.getoption("--username")
+
+
+@pytest.fixture(scope="session")
+def key(request):
+    return request.config.getoption("--key")
+
+
+@pytest.fixture(scope="session")
+def client(base_url_api, username, key):
+    client = ApiToken(base_url_api=base_url_api, username=username, key=key)
+    yield client
+
+
+@pytest.fixture(scope="function")
+def client_function(base_url_api, username, key):
+    client = ApiToken(base_url_api=base_url_api, username=username, key=key)
+    yield client
