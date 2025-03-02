@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
+from config.configuration import BASE_URL
 from data.create_product import CreateProductData
 from data.create_user import CreateUserData
 from page_objects.admin_page import AdminPage, AddProductPage, AdminProductPage
@@ -23,7 +24,7 @@ def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", help="Browser for tests")
     parser.addoption(
         "--base_url",
-        default="http://192.168.1.242:8082",
+        default=BASE_URL,
         help="Base URL of the application",
     )
     parser.addoption(
@@ -66,24 +67,28 @@ def pytest_runtest_makereport(item, call):
     # Создание скриншота
     if rep.when == "call" and rep.outcome == "failed":
         try:
-            driver = item.funcargs["browser"]
+            if "browser" in item.funcargs:
+                driver = item.funcargs["browser"]
 
-            screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
-            os.makedirs(screenshots_dir, exist_ok=True)
+                screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
+                os.makedirs(screenshots_dir, exist_ok=True)
 
-            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            date_dir = os.path.join(screenshots_dir, current_date)
-            os.makedirs(date_dir, exist_ok=True)
+                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                date_dir = os.path.join(screenshots_dir, current_date)
+                os.makedirs(date_dir, exist_ok=True)
 
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_path = os.path.join(
-                date_dir, f"{item.name}_{timestamp}_{item.status}.png"
-            )
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                screenshot_path = os.path.join(
+                    date_dir, f"{item.name}_{timestamp}_{item.status}.png"
+                )
 
-            driver.save_screenshot(screenshot_path)
+                driver.save_screenshot(screenshot_path)
 
-            logger = driver.logger
-            logger.info(f"Скриншот сохранен: {screenshot_path}")
+                logger = driver.logger
+                logger.info(f"Скриншот сохранен: {screenshot_path}")
+            else:
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Тест {item.name} не использует браузер, скриншот не создан.")
         except Exception as e:
             driver = item.funcargs["browser"]
             logger = driver.logger
