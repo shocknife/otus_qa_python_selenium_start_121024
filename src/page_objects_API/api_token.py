@@ -12,21 +12,19 @@ from src.page_objects_API.api_ship_address import ApiShipMethod
 
 logger = logging.getLogger(__name__)
 
+
 class ApiToken:
     def __init__(self, base_url_api, username, key):
-
         self.base_url_api = base_url_api
         self.session = requests.Session()
-        params = {'username': username,
-                  'key': key}
+        params = {"username": username, "key": key}
         response = requests.post(f"{self.base_url_api}api/account/login", data=params)
         json_response = response.json()
         assert response.status_code == HTTPStatus.OK
         assert response.json().get("api_token")
         logger.debug(f"Ответ JSON: {json_response}")
-        token = json_response['api_token']
-        self.session.params = {'api_token': token}
-
+        token = json_response["api_token"]
+        self.session.params = {"api_token": token}
 
     @property
     def currency_api(self) -> callable:

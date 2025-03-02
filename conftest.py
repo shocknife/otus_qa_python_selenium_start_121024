@@ -54,8 +54,12 @@ def pytest_addoption(parser):
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
     parser.addoption("--no-sandbox")
-    parser.addoption("--url_api", default=API_BASE_URL, help="BaseUrl for api_tests API")
-    parser.addoption("--username", default=API_USERNAME, help="Пользователь по умолчанию в админке")
+    parser.addoption(
+        "--url_api", default=API_BASE_URL, help="BaseUrl for api_tests API"
+    )
+    parser.addoption(
+        "--username", default=API_USERNAME, help="Пользователь по умолчанию в админке"
+    )
     parser.addoption("--key", default=API_KEY, help="Ключ по умолчанию в админке")
 
 
@@ -92,7 +96,9 @@ def pytest_runtest_makereport(item, call):
                 logger.info(f"Скриншот сохранен: {screenshot_path}")
             else:
                 logger = logging.getLogger(__name__)
-                logger.warning(f"Тест {item.name} не использует браузер, скриншот не создан.")
+                logger.warning(
+                    f"Тест {item.name} не использует браузер, скриншот не создан."
+                )
         except Exception as e:
             driver = item.funcargs["browser"]
             logger = driver.logger
@@ -102,7 +108,9 @@ def pytest_runtest_makereport(item, call):
     allure_results_dir = os.path.join(os.path.dirname(__file__), "allure-results")
     os.makedirs(allure_results_dir, exist_ok=True)
 
+
 # Настройка параметров для запуска тестов UI
+
 
 @pytest.fixture()
 def browser(request):
@@ -271,7 +279,9 @@ def create_new_product(browser):
     assert data.name in product.assert_product()
     return browser, data
 
+
 # Настройка параметров для запуска тестов API
+
 
 @pytest.fixture(scope="session")
 def base_url_api(request):
