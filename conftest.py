@@ -10,9 +10,10 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 from selenium.webdriver.edge.options import Options as EdgeOptions
 
-from config.configuration import BASE_URL
+from config.configuration import BASE_URL, API_BASE_URL, API_USERNAME, API_KEY
 from data.create_product import CreateProductData
 from data.create_user import CreateUserData
+from src.page_objects_API.api_token import ApiToken
 from src.page_objects_UI.admin_page import AdminPage, AddProductPage, AdminProductPage
 from src.page_objects_UI.app import Application
 from src.page_objects_UI.base_page import BasePage
@@ -53,6 +54,9 @@ def pytest_addoption(parser):
     parser.addoption("--video", action="store_true", help="Record video during tests")
     parser.addoption("--bv", help="Browser version")
     parser.addoption("--no-sandbox")
+    parser.addoption("--url_api", default=API_BASE_URL, help="BaseUrl for api_tests API")
+    parser.addoption("--username", default=API_USERNAME, help="Пользователь по умолчанию в админке")
+    parser.addoption("--key", default=API_KEY, help="Ключ по умолчанию в админке")
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -268,3 +272,29 @@ def create_new_product(browser):
     return browser, data
 
 # Настройка параметров для запуска тестов API
+
+@pytest.fixture(scope="session")
+def base_url_api(request):
+    return request.config.getoption("--url_api")
+
+
+@pytest.fixture(scope="session")
+def username(request):
+    return request.config.getoption("--username")
+
+
+@pytest.fixture(scope="session")
+def key(request):
+    return request.config.getoption("--key")
+
+
+@pytest.fixture(scope="session")
+def client(base_url_api, username, key):
+    client = ApiToken(base_url_api=base_url_api, username=username, key=key)
+    yield client
+
+
+@pytest.fixture(scope="function")
+def client_function(base_url_api, username, key):
+    client = ApiToken(base_url_api=base_url_api, username=username, key=key)
+    yield client

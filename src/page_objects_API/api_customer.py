@@ -1,6 +1,10 @@
+import conftest
+
+
 class ApiCustomer:
     def __init__(self, client):
         self.client = client
+
 
     def post_add_customer(self,
                              firstname: str,

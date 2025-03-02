@@ -1,3 +1,6 @@
+import conftest
+
+
 class ApiShipMethod:
     def __init__(self, client):
         self.client = client

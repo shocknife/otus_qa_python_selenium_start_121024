@@ -1,3 +1,6 @@
+import conftest
+
+
 class ApiOrder:
     def __init__(self, client):
         self.client = client
