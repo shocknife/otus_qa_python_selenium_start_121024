@@ -100,6 +100,6 @@ class BasePage:
     def find_presence_element(self, locator: tuple, wait_time=15):
         element = WebDriverWait(self.browser, wait_time).until(
             EC.presence_of_element_located(locator),
-            message=f"Can't find element by locator {locator[1]}",
+            message=f"Не найден элемент с локатором {locator[1]}",
         )
         return element
