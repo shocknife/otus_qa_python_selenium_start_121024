@@ -34,9 +34,12 @@ class MainPage(BasePage):
     @allure.step("Пользователь разлогинивается")
     def logout_user(self):
         time.sleep(
-            1.5
+            2.5
         )  # Страница дозагружается и сбрасывает раскрытое меню, приходится делать минислип, без него никак
         self._find_element(self.ACCOUNT_LINK).click()
+        time.sleep(
+            1.0
+        )
         self._find_element(self.LOGOUT).click()
 
     @allure.step("Поиск продукта в строке поиска")
