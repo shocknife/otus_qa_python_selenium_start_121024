@@ -45,7 +45,7 @@ class AdminPage(BasePage):
 
     @allure.step("Выполняется выход из учетной записи admin")
     def logout(self):
-        self.browser.find_element(*self.LOGOUT_LINK).click()
+        self._find_element(self.LOGOUT_LINK).click()
 
     @allure.step("Удаление пользователя")
     def delete_user(self, new_person):
