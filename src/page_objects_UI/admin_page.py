@@ -68,6 +68,9 @@ class AdminPage(BasePage):
 
     @allure.step("Открытие просмотра страницы продуктов")
     def open_product_page(self):
+        ActionChains(self.browser).move_to_element(
+            self._find_element(self.CATALOG)
+        ).perform()
         self.find_presence_element(self.CATALOG).click()
         self.find_clickable_element(self.PRODUCT).click()
 
