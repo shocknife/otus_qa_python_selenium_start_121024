@@ -39,13 +39,10 @@ class AdminPage(BasePage):
 
     @allure.step("Выполняется ввод username и password")
     def login(self):
-        time.sleep(1)
         self.send_keys(element=self._find_element(self.USERNAME_INPUT), text="user")
-        time.sleep(1)
         self.send_keys(element=self._find_element(self.PASSWORD_INPUT), text="bitnami")
-        time.sleep(1)
         self._find_element(self.SUBMIT_BUTTON).click()
-        self.logger.info("Клик был произведен")
+
 
     @allure.step("Выполняется выход из учетной записи admin")
     def logout(self):

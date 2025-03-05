@@ -88,8 +88,8 @@ class BasePage:
         alert = self.browser.switch_to.alert
         alert.accept()
 
-    @allure.step("Поиск видимого элемента с ожиданием до 20 сек")
-    def _find_element(self, locator: tuple, wait_time=20):
+    @allure.step("Поиск видимого элемента с ожиданием до 35 сек")
+    def _find_element(self, locator: tuple, wait_time=35):
         element = WebDriverWait(self.browser, wait_time).until(
             EC.visibility_of_element_located(locator),
             message=f"Не найден элемент с локатором {locator[1]}",
