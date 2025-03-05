@@ -1,9 +1,9 @@
 {
   "firefox": {
-    "default": "latest",
+    "default": "125",
     "versions": {
-      "latest": {
-        "image": "selenoid/firefox",
+      "125": {
+        "image": "selenoid/firefox:125.0",
         "port": "4444",
         "path": "/wd/hub",
         "tmpfs": {"/tmp": "size=512m"}

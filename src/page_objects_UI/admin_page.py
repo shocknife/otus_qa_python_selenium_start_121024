@@ -9,8 +9,8 @@ from src.page_objects_UI.base_page import BasePage
 
 
 class AdminPage(BasePage):
-    USERNAME_INPUT = (By.ID, "input-username")
-    PASSWORD_INPUT = (By.NAME, "password")
+    USERNAME_INPUT = (By.XPATH, "//*[@id='input-username']")
+    PASSWORD_INPUT = (By.XPATH, "//*[@id='input-password']")
     SUBMIT_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
     LOGOUT_LINK = (By.XPATH, "//*[contains(text(), 'Logout')]")
     LOGIN_MESSAGE = (
@@ -37,11 +37,21 @@ class AdminPage(BasePage):
         self.check_element_present(*self.SUBMIT_BUTTON)
         self.check_element_present(*self.LOGIN_MESSAGE)
 
-    @allure.step("Выполняется ввод username и password")
+    @allure.step("Выполняется ввод в поле username и поле password")
     def login(self):
         self.send_keys(element=self._find_element(self.USERNAME_INPUT), text="user")
+        entered_text_1 = self._find_element(self.PASSWORD_INPUT).get_attribute("value")
+
+        self.logger.info(f"{self.class_name}: Текущий текст в поле: {entered_text_1}")
+
         self.send_keys(element=self._find_element(self.PASSWORD_INPUT), text="bitnami")
+        entered_text_2 = self._find_element(self.PASSWORD_INPUT).get_attribute("value")
+
+        self.logger.info(f"{self.class_name}: Текущий текст в поле: {entered_text_2}")
+
         self._find_element(self.SUBMIT_BUTTON).click()
+
+        self.logger.info("Вход в систему выполнен")
 
     @allure.step("Выполняется выход из учетной записи admin")
     def logout(self):
@@ -68,6 +78,9 @@ class AdminPage(BasePage):
 
     @allure.step("Открытие просмотра страницы продуктов")
     def open_product_page(self):
+        ActionChains(self.browser).move_to_element(
+            self.find_presence_element(self.CATALOG)
+        ).perform()
         self.find_presence_element(self.CATALOG).click()
         self.find_clickable_element(self.PRODUCT).click()
 

@@ -73,7 +73,7 @@ def pytest_runtest_makereport(item, call):
         item.status = "passed"
 
     # Создание скриншота
-    if rep.when == "call" and rep.outcome == "failed":
+    if (rep.when == "call" or rep.when == "setup") and rep.outcome == "failed":
         try:
             if "browser" in item.funcargs:
                 driver = item.funcargs["browser"]
@@ -187,11 +187,11 @@ def browser(request):
         #     "enableVNC": vnc,
         #     "name": request.node.name,
         #     "screenResolution": "1280x2000",
-        #     "enableVideo": video,
+        #      "enableVideo": video,
         #     "enableLog": logs,
         #     "timeZone": "Europe/Moscow",
         #     "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"],
-        # },
+        #  },
         # "acceptInsecureCerts": True,
     }
 

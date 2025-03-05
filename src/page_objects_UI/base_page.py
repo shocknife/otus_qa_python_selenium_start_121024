@@ -27,9 +27,10 @@ class BasePage:
 
     @allure.step("Поиск кликабельного элемента")
     def find_clickable_element(self, locator: tuple, wait_time=15):
+        self.logger.info("%s: Поиск элементов: %s" % (self.class_name, str(locator)))
         element = WebDriverWait(self.browser, wait_time).until(
             EC.element_to_be_clickable(locator),
-            message=f"Can't find element by locator {locator[1]}",
+            message=f"Не найден локатор {locator[1]}",
         )
         return element
 
@@ -79,8 +80,15 @@ class BasePage:
     @allure.step("Ввод текста")
     def send_keys(self, element, text=None):
         element.clear()
+        self.logger.info(
+            "%s: Очистка поля с элементом: %s" % (self.class_name, str(element))
+        )
         if text:
             element.send_keys(text)
+            self.logger.info(
+                "%s: Ввод в поле: %s , введен текст: %s"
+                % (self.class_name, str(element), str(text))
+            )
             return element
 
     @allure.step("Подтверждение allert'a")
@@ -88,8 +96,11 @@ class BasePage:
         alert = self.browser.switch_to.alert
         alert.accept()
 
-    @allure.step("Поиск видимого элемента с ожиданием до 20 сек")
-    def _find_element(self, locator: tuple, wait_time=20):
+    @allure.step("Поиск видимого элемента с ожиданием до 60 сек")
+    def _find_element(self, locator: tuple, wait_time=60):
+        self.logger.info(
+            "%s: Поиск с ожиданием элементов: %s" % (self.class_name, str(locator))
+        )
         element = WebDriverWait(self.browser, wait_time).until(
             EC.visibility_of_element_located(locator),
             message=f"Не найден элемент с локатором {locator[1]}",
@@ -98,6 +109,10 @@ class BasePage:
 
     @allure.step("Поиск присутствующего элемента с ожиданием до 15 сек ")
     def find_presence_element(self, locator: tuple, wait_time=15):
+        self.logger.info(
+            "%s: Поиск с ожиданием настоящих элементов: %s"
+            % (self.class_name, str(locator))
+        )
         element = WebDriverWait(self.browser, wait_time).until(
             EC.presence_of_element_located(locator),
             message=f"Не найден элемент с локатором {locator[1]}",
