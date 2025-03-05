@@ -27,9 +27,10 @@ class BasePage:
 
     @allure.step("Поиск кликабельного элемента")
     def find_clickable_element(self, locator: tuple, wait_time=15):
+        self.logger.info("%s: Поиск элементов: %s" % (self.class_name, str(locator)))
         element = WebDriverWait(self.browser, wait_time).until(
             EC.element_to_be_clickable(locator),
-            message=f"Can't find element by locator {locator[1]}",
+            message=f"Не найден локатор {locator[1]}",
         )
         return element
 
