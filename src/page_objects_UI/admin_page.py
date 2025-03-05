@@ -39,13 +39,16 @@ class AdminPage(BasePage):
 
     @allure.step("Выполняется ввод username и password")
     def login(self):
+        self.logger.info("Вводит текст в поле username:" )
         self.send_keys(element=self._find_element(self.USERNAME_INPUT), text="user")
-        self.logger.info(
-            "Вводит текст в поле username:" )
+        entered_text_1 = self._find_element(self.PASSWORD_INPUT).get_attribute('value')
+        self.logger.info(f"{self.class_name}: Текущий текст в поле: {entered_text_1}")
         self.send_keys(element=self._find_element(self.PASSWORD_INPUT), text="bitnami")
-        self.logger.info(
-            "Вводит текст в поле password: ")
+        entered_text_2 = self._find_element(self.PASSWORD_INPUT).get_attribute('value')
+        self.logger.info(f"{self.class_name}: Текущий текст в поле: {entered_text_2}")
+        self.logger.info("Вводит текст в поле password: ")
         self._find_element(self.SUBMIT_BUTTON).click()
+        self.logger.info("Вход в систему выполнен")
 
     @allure.step("Выполняется выход из учетной записи admin")
     def logout(self):
