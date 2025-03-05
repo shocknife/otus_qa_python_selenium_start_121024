@@ -86,7 +86,8 @@ class BasePage:
         if text:
             element.send_keys(text)
             self.logger.info(
-                "%s: Ввод в поле: %s , введен текст: %s" % (self.class_name, str(element), str(text))
+                "%s: Ввод в поле: %s , введен текст: %s"
+                % (self.class_name, str(element), str(text))
             )
             return element
 
@@ -109,7 +110,8 @@ class BasePage:
     @allure.step("Поиск присутствующего элемента с ожиданием до 15 сек ")
     def find_presence_element(self, locator: tuple, wait_time=15):
         self.logger.info(
-            "%s: Поиск с ожиданием настоящих элементов: %s" % (self.class_name, str(locator))
+            "%s: Поиск с ожиданием настоящих элементов: %s"
+            % (self.class_name, str(locator))
         )
         element = WebDriverWait(self.browser, wait_time).until(
             EC.presence_of_element_located(locator),
