@@ -183,15 +183,15 @@ def browser(request):
     caps = {
         "browserName": browser_name,
         "browserVersion": version,
-        "selenoid:options": {
+        # "selenoid:options": {
         #     "enableVNC": vnc,
         #     "name": request.node.name,
         #     "screenResolution": "1280x2000",
-             "enableVideo": video,
+        #      "enableVideo": video,
         #     "enableLog": logs,
         #     "timeZone": "Europe/Moscow",
         #     "env": ["LANG=ru_RU.UTF-8", "LANGUAGE=ru:en", "LC_ALL=ru_RU.UTF-8"],
-         },
+        #  },
         # "acceptInsecureCerts": True,
     }
 
