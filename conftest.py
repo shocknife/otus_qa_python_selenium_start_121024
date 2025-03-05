@@ -73,7 +73,7 @@ def pytest_runtest_makereport(item, call):
         item.status = "passed"
 
     # Создание скриншота
-    if rep.when == "call" and rep.outcome == "failed":
+    if (rep.when == "call" or rep.when == "setup") and rep.outcome == "failed":
         try:
             if "browser" in item.funcargs:
                 driver = item.funcargs["browser"]
