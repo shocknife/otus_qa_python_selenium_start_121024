@@ -9,8 +9,8 @@ from src.page_objects_UI.base_page import BasePage
 
 
 class AdminPage(BasePage):
-    USERNAME_INPUT = (By.ID, "input-username")
-    PASSWORD_INPUT = (By.NAME, "password")
+    USERNAME_INPUT = (By.XPATH, "//*[@id='input-username']")
+    PASSWORD_INPUT = (By.XPATH, "//*[@id='input-password']")
     SUBMIT_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
     LOGOUT_LINK = (By.XPATH, "//*[contains(text(), 'Logout')]")
     LOGIN_MESSAGE = (
