@@ -96,8 +96,8 @@ class BasePage:
         alert = self.browser.switch_to.alert
         alert.accept()
 
-    @allure.step("Поиск видимого элемента с ожиданием до 120 сек")
-    def _find_element(self, locator: tuple, wait_time=120):
+    @allure.step("Поиск видимого элемента с ожиданием до 30 сек")
+    def _find_element(self, locator: tuple, wait_time=30):
         self.logger.info(
             "%s: Поиск с ожиданием элементов: %s" % (self.class_name, str(locator))
         )
@@ -118,3 +118,6 @@ class BasePage:
             message=f"Не найден элемент с локатором {locator[1]}",
         )
         return element
+
+    def refresh_page(self):
+        self.browser.refresh()
