@@ -52,6 +52,7 @@ class AdminPage(BasePage):
         self._find_element(self.SUBMIT_BUTTON).click()
 
         self.logger.info("Вход в систему выполнен")
+        self.verify_title("Administration")
 
     @allure.step("Выполняется выход из учетной записи admin")
     def logout(self):
