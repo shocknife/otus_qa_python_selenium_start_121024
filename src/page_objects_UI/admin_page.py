@@ -23,7 +23,8 @@ class AdminPage(BasePage):
     BOX = (By.XPATH, "//text()[contains(.,'{}')]/../..//input")
     DELETE = (By.CSS_SELECTOR, ".btn.btn-danger")
     DELETE_OK = (By.CSS_SELECTOR, ".alert")
-    CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
+    CATALOG = (By.XPATH, "//ul[@id='menu']//li[@id='menu-catalog']")
+    # CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
     PRODUCT = (By.XPATH, "//a[text()='Products']")
 
     @allure.step("Выполняется вход на страницу")
@@ -52,6 +53,7 @@ class AdminPage(BasePage):
         self._find_element(self.SUBMIT_BUTTON).click()
 
         self.logger.info("Вход в систему выполнен")
+        time.sleep(5)
         self.verify_title("Administration")
 
     @allure.step("Выполняется выход из учетной записи admin")
