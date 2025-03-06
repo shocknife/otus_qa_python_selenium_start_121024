@@ -23,8 +23,7 @@ class AdminPage(BasePage):
     BOX = (By.XPATH, "//text()[contains(.,'{}')]/../..//input")
     DELETE = (By.CSS_SELECTOR, ".btn.btn-danger")
     DELETE_OK = (By.CSS_SELECTOR, ".alert")
-    CATALOG = (By.XPATH, "//ul[@id='menu']//li[@id='menu-catalog']")
-    # CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
+    CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
     PRODUCT = (By.XPATH, "//a[text()='Products']")
 
     @allure.step("Выполняется вход на страницу")

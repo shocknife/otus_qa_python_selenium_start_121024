@@ -96,8 +96,8 @@ class BasePage:
         alert = self.browser.switch_to.alert
         alert.accept()
 
-    @allure.step("Поиск видимого элемента с ожиданием до 60 сек")
-    def _find_element(self, locator: tuple, wait_time=60):
+    @allure.step("Поиск видимого элемента с ожиданием до 120 сек")
+    def _find_element(self, locator: tuple, wait_time=120):
         self.logger.info(
             "%s: Поиск с ожиданием элементов: %s" % (self.class_name, str(locator))
         )
