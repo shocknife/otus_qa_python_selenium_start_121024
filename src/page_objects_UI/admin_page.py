@@ -23,7 +23,8 @@ class AdminPage(BasePage):
     BOX = (By.XPATH, "//text()[contains(.,'{}')]/../..//input")
     DELETE = (By.CSS_SELECTOR, ".btn.btn-danger")
     DELETE_OK = (By.CSS_SELECTOR, ".alert")
-    CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
+    CATALOG = (By.XPATH, "//ul[@id='menu']//li[@id='menu-catalog']")
+    # CATALOG = (By.XPATH, "//*[@id='menu-catalog']")
     PRODUCT = (By.XPATH, "//a[text()='Products']")
 
     @allure.step("Выполняется вход на страницу")
@@ -79,9 +80,6 @@ class AdminPage(BasePage):
 
     @allure.step("Открытие просмотра страницы продуктов")
     def open_product_page(self):
-        ActionChains(self.browser).move_to_element(
-            self._find_element(self.CATALOG)
-        ).perform()
         self._find_element(self.CATALOG).click()
         self.find_clickable_element(self.PRODUCT).click()
 
